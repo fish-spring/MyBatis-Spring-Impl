@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 public class MonkeyTest extends Base {
+    // 自动注入实现类
     @Autowired
     MonkeyDao monkeyDao;
 

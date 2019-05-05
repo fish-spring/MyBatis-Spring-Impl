@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
     <!-- 配置数据源-->
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-        <property name="url" value="jdbc:mysql://localhost:3306/mybatis_spring"/>
+        <!-- 这里直接使用内存数据，使得课程demo达到开箱即用的效果 -->
+        <property name="url" value="jdbc:h2:mem:mybatis_spring"/>
         <property name="username" value="root"/>
+        <property name="password" value="123456"/>
         <property name="initialSize" value="10"/>
     </bean>
+
+    <!-- 初始化数据库 -->
+    <jdbc:initialize-database>
+        <jdbc:script location="classpath:initDB.sql"/>
+    </jdbc:initialize-database>
+
     <!-- 配置MyBatis的SQLSessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 给出数据源 -->
         <property name="dataSource" ref="dataSource" />
+        <!-- 指明mapper文件的位置 -->
         <property name="mapperLocations" value="classpath:mapper/*.xml"/>
     </bean>
 
-    <!-- 自动生成 implement Dao层接口的 类的实例-->
+    <!-- 自动生成dao层接口的实现类-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <!-- use this sessionFactory -->
+        <!-- 使用当前sessionFactory -->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-        <!-- implement interface of this package -->
+        <!-- 扫描接口所在的包 -->
         <property name="basePackage" value="dao" />
     </bean>
 </beans>
